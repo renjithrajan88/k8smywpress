@@ -2,7 +2,8 @@ global:
   name: wpress
   domainName: www.k8smywpress.tk
 
-replicaCount: 1
+mysqlreplicaCount: 3
+wpressreplicaCount: 2
 
 mysqlDeployment:
   name: mysql
@@ -17,6 +18,12 @@ wpressDeployment:
   containerPort: 80
   svcTargetPort: 80
   strategyType: Recreate
+
+  NFS:
+   ip: 128.199.17.25
+   path: /mnt/nfs_wpress
+   provisioner: k8smywpress.com/nfs
+
 
 serviceAccount:
   # Specifies whether a service account should be created
