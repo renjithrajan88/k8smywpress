@@ -5,7 +5,7 @@ metadata:
   namespace: {{ printf "ns-%s" .Values.global.name }}
   annotations:
     "helm.sh/hook": "pre-install"
-    "helm.sh/hook-weight": "2"
+    "helm.sh/hook-weight": "7"
   labels:
     {{- include "wpress.labels" . | nindent 4 }}
 spec:

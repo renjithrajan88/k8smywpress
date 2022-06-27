@@ -1,17 +1,18 @@
 apiVersion:  apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: {{ printf "dpl-%s" .Values.mysqlDeployment.name }}
+  name: {{ printf "sts-%s" .Values.mysqlDeployment.name }}
   namespace: {{ printf "ns-%s" .Values.global.name }}
   annotations:
     "helm.sh/hook": "pre-install"
-    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-weight": "8"
   labels:
     {{- include "mysql.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.mysqlreplicaCount }}
   {{- end }}
+  serviceName: {{ printf "svc-%s" .Values.mysqlDeployment.name }}
   selector:
     matchLabels:
       {{- include "mysql.selectorLabels" . | nindent 6 }}
@@ -22,6 +23,7 @@ spec:
       labels:
         {{- include "mysql.selectorLabels" . | nindent 8 }}
     spec:
+      terminationGracePeriodSeconds: 10
       containers:
       - image: "{{ .Values.mysqlDeployment.image }}"
         name: {{ .Values.mysqlDeployment.name }}
@@ -52,7 +54,13 @@ spec:
         volumeMounts:
         - name: {{ printf "vol-%s" .Values.mysqlDeployment.name }}
           mountPath: "/var/lib/mysql"
-      volumes:
-      - name: {{ printf "vol-%s" .Values.mysqlDeployment.name }}
-        persistentVolumeClaim:
-          claimName: {{ printf "pvc-%s" .Values.mysqlDeployment.name }}		  
+  volumeClaimTemplates:
+   - metadata:
+       name: {{ printf "vol-%s" .Values.mysqlDeployment.name }}
+     spec:
+       storageClassName: {{ .Values.global.storageClass }}
+       accessModes:
+         - ReadWriteOnce
+       resources:
+         requests:
+           storage: 1Gi		  

@@ -5,12 +5,13 @@ metadata:
   namespace: {{ printf "ns-%s" .Values.global.name }}
   annotations:
     "helm.sh/hook": "pre-install"
-    "helm.sh/hook-weight": "1"   
+    "helm.sh/hook-weight": "6"   
   labels:                 
     {{- include "mysql.labels" . | nindent 4 }}
 spec:
   ports:
     - port: {{ .Values.mysqlDeployment.containerPort }}
       targetPort: {{ .Values.mysqlDeployment.svcTargetPort }}
+      clusterIP: None
   selector:
     {{- include "mysql.selectorLabels" . | nindent 4 }}

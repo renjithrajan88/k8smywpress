@@ -5,12 +5,12 @@ metadata:
   namespace: {{ printf "ns-%s" .Values.global.name }}
   annotations:
     "helm.sh/hook": "pre-install"
-    "helm.sh/hook-weight": "2"
+    "helm.sh/hook-weight": "9"
   labels:
     {{- include "wpress.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.wpressreplicaCount }}
   {{- end }}
   selector:
     matchLabels:
@@ -64,9 +64,9 @@ spec:
               value: {{ .Values.global.domainName }}
             - name: Host
               value: {{ .Values.global.domainName }}
-            timeoutSeconds: 10
-            periodSeconds: 15
-            failureThreshold: 5
+          timeoutSeconds: 10
+          periodSeconds: 15
+          failureThreshold: 5
         readinessProbe:
           initialDelaySeconds: 10
           httpGet:
@@ -79,9 +79,9 @@ spec:
               value: {{ .Values.global.domainName }}
             - name: Host
               value: {{ .Values.global.domainName }}
-            timeoutSeconds: 10
-            periodSeconds: 15
-            failureThreshold: 5
+          timeoutSeconds: 10
+          periodSeconds: 15
+          failureThreshold: 5
         startupProbe:
           httpGet:
             path: /
@@ -93,9 +93,15 @@ spec:
               value: {{ .Values.global.domainName }}
             - name: Host
               value: {{ .Values.global.domainName }}
-            failureThreshold: 30
-            periodSeconds: 10          
-      volumes:
-      - name: {{ printf "vol-%s" .Values.wpressDeployment.name }}
-        persistentVolumeClaim:
-         claimName: {{ printf "pvc-%s" .Values.wpressDeployment.name }}		  
+          failureThreshold: 30
+          periodSeconds: 10          
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ printf "vol-%s" .Values.wpressDeployment.name }}
+    spec:
+      storageClassName: {{ .Values.global.storageClass }}
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi	  

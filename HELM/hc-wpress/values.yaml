@@ -1,6 +1,7 @@
 global:
   name: wpress
   domainName: www.k8smywpress.tk
+  storageClass: sc-nfs
 
 mysqlreplicaCount: 3
 wpressreplicaCount: 2

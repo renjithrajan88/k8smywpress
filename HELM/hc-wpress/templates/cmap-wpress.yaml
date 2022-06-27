@@ -3,6 +3,9 @@ kind: ConfigMap
 metadata:
   name: {{ printf "cmap-%s" .Values.global.name }}
   namespace: {{ printf "ns-%s" .Values.global.name }}
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-weight": "1"
 data:
-  mysql-url: {{ printf "svc-%s" .Values.mysqlDeployment.name }}
+  mysql-url: {{ printf "sts-mysql-0.svc-%s" .Values.mysqlDeployment.name }}
   mysql-db-name: wpressdb
