@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ printf "cmap-%s" .Values.global.name }}
+  namespace: {{ printf "ns-%s" .Values.global.name }}
+data:
+  mysql-url: {{ printf "svc-%s" .Values.mysqlDeployment.name }}
+  mysql-db-name: wpressdb

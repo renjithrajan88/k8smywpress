@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: wpress-virtual-route
+  namespace: istio-system
+  #  annotations:
+  #  "helm.sh/hook": "post-install"
+  #  "helm.sh/hook-weight": "2"  
+spec: 
+  hosts:
+  - "*"
+  gateways:
+  - wpress-gateway
+  http:
+  - route:
+    - destination:
+        host: svc-wpress.ns-wpress.svc.cluster.local
+        port:
+          number: 80

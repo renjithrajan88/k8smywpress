@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "dpl-%s" .Values.wpressDeployment.name }}
+  namespace: {{ printf "ns-%s" .Values.global.name }}
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-weight": "2"
+  labels:
+    {{- include "wpress.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "wpress.selectorLabels" . | nindent 6 }}
+  strategy:
+    type: {{ .Values.wpressDeployment.strategyType }}
+  template:
+    metadata:
+      labels:
+        {{- include "wpress.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - image: "{{ .Values.wpressDeployment.image }}"
+        name: {{ .Values.wpressDeployment.name }}
+        env:
+        - name: WORDPRESS_DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ printf "cmap-%s" .Values.global.name }}          
+              key: mysql-url        
+        - name: WORDPRESS_DB_USER
+          valueFrom:
+           secretKeyRef:
+             name: {{ printf "sec-%s" .Values.global.name }}
+             key: mysql-username
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ printf "sec-%s" .Values.global.name }}
+              key: mysql-password
+        - name: WORDPRESS_DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: {{ printf "cmap-%s" .Values.global.name }}          
+              key: mysql-db-name 
+        ports:
+        - containerPort: {{ .Values.wpressDeployment.containerPort }}
+          name: {{ .Values.wpressDeployment.name }}
+        volumeMounts:
+        - name: {{ printf "vol-%s" .Values.wpressDeployment.name }}
+          mountPath: "/var/www/html"
+        livenessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: /
+            port: 80
+            httpHeaders:
+            - name: X-Forwarded-Proto
+              value: https
+            - name: X-Forwarded-Host
+              value: {{ .Values.global.domainName }}
+            - name: Host
+              value: {{ .Values.global.domainName }}
+            timeoutSeconds: 10
+            periodSeconds: 15
+            failureThreshold: 5
+        readinessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: /
+            port: 80
+            httpHeaders:
+            - name: X-Forwarded-Proto
+              value: https
+            - name: X-Forwarded-Host
+              value: {{ .Values.global.domainName }}
+            - name: Host
+              value: {{ .Values.global.domainName }}
+            timeoutSeconds: 10
+            periodSeconds: 15
+            failureThreshold: 5
+        startupProbe:
+          httpGet:
+            path: /
+            port: 80
+            httpHeaders:
+            - name: X-Forwarded-Proto
+              value: https
+            - name: X-Forwarded-Host
+              value: {{ .Values.global.domainName }}
+            - name: Host
+              value: {{ .Values.global.domainName }}
+            failureThreshold: 30
+            periodSeconds: 10          
+      volumes:
+      - name: {{ printf "vol-%s" .Values.wpressDeployment.name }}
+        persistentVolumeClaim:
+         claimName: {{ printf "pvc-%s" .Values.wpressDeployment.name }}		  

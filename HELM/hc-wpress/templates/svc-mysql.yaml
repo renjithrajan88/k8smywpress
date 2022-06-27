@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ printf "svc-%s" .Values.mysqlDeployment.name }}
+  namespace: {{ printf "ns-%s" .Values.global.name }}
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-weight": "1"   
+  labels:                 
+    {{- include "mysql.labels" . | nindent 4 }}
+spec:
+  ports:
+    - port: {{ .Values.mysqlDeployment.containerPort }}
+      targetPort: {{ .Values.mysqlDeployment.svcTargetPort }}
+  selector:
+    {{- include "mysql.selectorLabels" . | nindent 4 }}
