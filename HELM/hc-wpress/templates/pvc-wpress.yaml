@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ printf "pvc-%s" .Values.wpressDeployment.name }}
+  name: {{ printf "pvc-%s-%s" .Values.wpressDeployment.name .Values.global.name }}
   namespace: {{ printf "ns-%s" .Values.global.name }}
   annotations:
     "helm.sh/hook": "pre-install"

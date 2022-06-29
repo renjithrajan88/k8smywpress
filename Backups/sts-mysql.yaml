@@ -1,0 +1,64 @@
+apiVersion:  apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ printf "sts-%s" .Values.mysqlDeployment.name }}
+  namespace: {{ printf "ns-%s" .Values.global.name }}
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-weight": "8"
+  labels:
+    {{- include "mysql.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.mysqlreplicaCount }}
+  {{- end }}
+  serviceName: {{ printf "svc-%s" .Values.mysqlDeployment.name }}
+  selector:
+    matchLabels:
+      {{- include "mysql.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "mysql.selectorLabels" . | nindent 8 }}
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - image: "{{ .Values.mysqlDeployment.image }}"
+        name: {{ .Values.mysqlDeployment.name }}
+        env:
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: {{ printf "cmap-%s" .Values.global.name }}          
+              key: mysql-db-name
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ printf "sec-%s" .Values.global.name }}
+              key: mysql-root-password
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ printf "sec-%s" .Values.global.name }}
+              key: mysql-username
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ printf "sec-%s" .Values.global.name }}
+              key: mysql-password
+        ports:
+        - containerPort: {{ .Values.mysqlDeployment.containerPort }}
+          name: {{ .Values.mysqlDeployment.name }}
+        volumeMounts:
+        - name: {{ printf "vol-%s" .Values.mysqlDeployment.name }}
+          mountPath: "/var/lib/mysql"
+  volumeClaimTemplates:
+   - metadata:
+       name: {{ printf "vol-%s" .Values.mysqlDeployment.name }}
+     spec:
+       storageClassName: {{ printf "sc-%s" .Values.global.name }}
+       accessModes:
+         - ReadWriteOnce
+       resources:
+         requests:
+           storage: 1Gi		  

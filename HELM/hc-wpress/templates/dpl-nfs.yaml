@@ -29,7 +29,7 @@ spec:
               mountPath: /persistentvolumes
           env:
             - name: PROVISIONER_NAME
-              value: {{ .Values.NFS.provisioner }}
+              value: {{ printf "%s-%s" .Values.NFS.provisioner .Values.global.name }}
             - name: NFS_SERVER
               value: {{ .Values.NFS.ip }}
             - name: NFS_PATH

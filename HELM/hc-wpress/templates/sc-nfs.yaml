@@ -6,6 +6,5 @@ metadata:
     "helm.sh/hook": "pre-install"
     "helm.sh/hook-weight": "5"
 provisioner: {{ printf "%s-%s" .Values.NFS.provisioner .Values.global.name }}
-namespace: {{ printf "ns-%s" .Values.global.name }}
 parameters:
   archiveOnDelete: "false"
