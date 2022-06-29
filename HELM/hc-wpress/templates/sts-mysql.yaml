@@ -56,7 +56,7 @@ spec:
    - metadata:
        name: {{ printf "vol-%s" .Values.mysqlDeployment.name }}
      spec:
-       storageClassName: {{ .Values.global.storageClass }}
+       storageClassName: {{ printf "sc-%s" .Values.global.name }}
        accessModes:
          - ReadWriteOnce
        resources:

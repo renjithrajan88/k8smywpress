@@ -98,4 +98,4 @@ spec:
       volumes:
       - name: {{ printf "vol-%s" .Values.wpressDeployment.name }}
         persistentVolumeClaim:
-         claimName: {{ printf "pvc-%s" .Values.wpressDeployment.name }}	  
+         claimName: {{ printf "pvc-%s-%s" .Values.wpressDeployment.name .Values.global.name }}
