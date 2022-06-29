@@ -9,7 +9,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: {{ printf "sc-%s" .Values.global.name }}
+  storageClassName: {{ .Values.global.storageClass }}
   resources:
     requests:
       storage: 1Gi

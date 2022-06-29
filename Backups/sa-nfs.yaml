@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ printf "nfs-client-provisioner-%s" .Values.global.name }}
+  name: nfs-client-provisioner
   namespace: {{ printf "ns-%s" .Values.global.name }}
   annotations:
     "helm.sh/hook": "pre-install"
@@ -10,7 +10,7 @@ metadata:
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: {{ printf "nfs-client-provisioner-runner-%s" .Values.global.name }}
+  name: nfs-client-provisioner-runner
   namespace: {{ printf "ns-%s" .Values.global.name }}
 rules:
   - apiGroups: [""]
@@ -29,21 +29,21 @@ rules:
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: {{ printf "run-nfs-client-provisioner-%s" .Values.global.name }}
+  name: run-nfs-client-provisioner
   namespace: {{ printf "ns-%s" .Values.global.name }}
 subjects:
   - kind: ServiceAccount
-    name: {{ printf "nfs-client-provisioner-%s" .Values.global.name }}
+    name: nfs-client-provisioner
     namespace: {{ printf "ns-%s" .Values.global.name }}
 roleRef:
   kind: ClusterRole
-  name: {{ printf "nfs-client-provisioner-runner-%s" .Values.global.name }}
+  name: nfs-client-provisioner-runner
   apiGroup: rbac.authorization.k8s.io
 ---
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: {{ printf "leader-locking-nfs-client-provisioner-%s" .Values.global.name }}
+  name: leader-locking-nfs-client-provisioner
   namespace: {{ printf "ns-%s" .Values.global.name }}
 rules:
   - apiGroups: [""]
@@ -53,13 +53,13 @@ rules:
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: {{ printf "leader-locking-nfs-client-provisioner-%s" .Values.global.name }}
+  name: leader-locking-nfs-client-provisioner
   namespace: {{ printf "ns-%s" .Values.global.name }}
 subjects:
   - kind: ServiceAccount
-    name: {{ printf "nfs-client-provisioner-%s" .Values.global.name }}
+    name: nfs-client-provisioner
     namespace: {{ printf "ns-%s" .Values.global.name }}
 roleRef:
   kind: Role
-  name: {{ printf "leader-locking-nfs-client-provisioner-%s" .Values.global.name }}
+  name: leader-locking-nfs-client-provisioner
   apiGroup: rbac.authorization.k8s.io

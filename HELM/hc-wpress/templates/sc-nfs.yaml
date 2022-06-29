@@ -1,10 +1,11 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: sc-nfs
+  name: {{ printf "sc-%s" .Values.global.name }}
   annotations:
     "helm.sh/hook": "pre-install"
     "helm.sh/hook-weight": "5"
-provisioner: {{ .Values.NFS.provisioner }}
+provisioner: {{ printf "%s-%s" .Values.NFS.provisioner .Values.global.name }}
+namespace: {{ printf "ns-%s" .Values.global.name }}
 parameters:
   archiveOnDelete: "false"
