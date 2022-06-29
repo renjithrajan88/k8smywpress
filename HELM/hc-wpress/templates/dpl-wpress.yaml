@@ -95,13 +95,7 @@ spec:
               value: {{ .Values.global.domainName }}
           failureThreshold: 30
           periodSeconds: 10          
-  volumeClaimTemplates:
-  - metadata:
-      name: {{ printf "vol-%s" .Values.wpressDeployment.name }}
-    spec:
-      storageClassName: {{ .Values.global.storageClass }}
-      accessModes:
-        - ReadWriteOnce
-      resources:
-        requests:
-          storage: 1Gi	  
+      volumes:
+      - name: {{ printf "vol-%s" .Values.wpressDeployment.name }}
+        persistentVolumeClaim:
+         claimName: {{ printf "pvc-%s" .Values.wpressDeployment.name }}	  

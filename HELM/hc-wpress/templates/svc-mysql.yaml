@@ -12,6 +12,6 @@ spec:
   ports:
     - port: {{ .Values.mysqlDeployment.containerPort }}
       targetPort: {{ .Values.mysqlDeployment.svcTargetPort }}
-      clusterIP: None
+  clusterIP: None
   selector:
     {{- include "mysql.selectorLabels" . | nindent 4 }}

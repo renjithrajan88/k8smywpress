@@ -3,10 +3,13 @@ kind: PersistentVolumeClaim
 metadata:
   name: {{ printf "pvc-%s" .Values.wpressDeployment.name }}
   namespace: {{ printf "ns-%s" .Values.global.name }}
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-weight": "6"
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: {{ printf "stgcls-%s" .Values.wpressDeployment.name }}
+  storageClassName: {{ .Values.global.storageClass }}
   resources:
     requests:
-      storage: 10Gi
+      storage: 1Gi

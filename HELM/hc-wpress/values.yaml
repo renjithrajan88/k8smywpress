@@ -20,10 +20,10 @@ wpressDeployment:
   svcTargetPort: 80
   strategyType: Recreate
 
-  NFS:
-   ip: 128.199.17.25
-   path: /mnt/nfs_wpress
-   provisioner: k8smywpress.com/nfs
+NFS:
+  ip: 128.199.17.25
+  path: /mnt/nfs_wpress
+  provisioner: k8smywpress.com/nfs
 
 
 serviceAccount:

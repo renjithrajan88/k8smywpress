@@ -1,6 +1,6 @@
 variable "API_key" {
   type = string
-  default = "dop_v1_897e2a35822ada79cb93f805ebda98d304e21e325e045e06cdc32534ee014241"
+  default = "dop_v1_3e3d194af4a5e21a3ec690fc6d26a92aabdd035f98657e064b05218cb6d86b3a"
   sensitive = true
 }
 variable "space_key" {
