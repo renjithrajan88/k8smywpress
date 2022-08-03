@@ -32,7 +32,7 @@ Implementing a challenge to deploy WordPress in Kubernetes using various tools l
 4. Installed terraform, kubectl and helm in the management server
 5. Terraform configuration :
 - Kubernetes cluster is deployed in digitalocean with a name "k8scluster"
-- Deploys instio service mesh into the kubernetes cluster with istiod, istiocore and istioingress components
+- Deploys istio service mesh into the kubernetes cluster with istiod, istiocore and istioingress components
 - Terraform state file is saved remotely into digitalocean space component
 6. Helm configuration :
 - All the kubernetes deployment files are configured as templates
